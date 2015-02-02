@@ -1,10 +1,10 @@
-FVS2
+ADB
 ====
 
-Assessment 2 Project Code
+Assessment 3 Project Code
 
-Project Set-up Instructions
-===========================
+Unnecessary Project Set-up Instructions written by an inferior group
+====================================================================
 
 1. Clone the repository.  It helps.  Don't worry about your project files overwriting any other files, Git has been configured to ignore these.  If you're using the GitHub tools, also install good old fashioned Git as it integrated with both Eclipse and IntelliJ IDEA to make managing version control easier.
 2. I (Manfred) suggest using Feature Branch Workflow when working with Git. Please read https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow and https://guides.github.com/introduction/flow/index.html before trying to push anything to our repo.
