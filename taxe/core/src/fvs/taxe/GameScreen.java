@@ -33,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
     private ResourceController resourceController;
     private GoalController goalController;
     private RouteController routeController;
+    private ScoreController scoreController;
 
     public GameScreen(TaxeGame game) {
         this.game = game;
@@ -54,6 +55,7 @@ public class GameScreen extends ScreenAdapter {
         resourceController = new ResourceController(context);
         goalController = new GoalController(context);
         routeController = new RouteController(context);
+        scoreController = new ScoreController(context);
 
         context.setRouteController(routeController);
         context.setTopBarController(topBarController);
@@ -116,6 +118,7 @@ public class GameScreen extends ScreenAdapter {
 
         resourceController.drawHeaderText();
         goalController.showCurrentPlayerGoals();
+        scoreController.drawScoreDetails();
     }
 
     @Override

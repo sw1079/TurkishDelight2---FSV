@@ -3,8 +3,10 @@ package gameLogic.goal;
 import Util.Tuple;
 import gameLogic.map.Station;
 import gameLogic.resource.Train;
+import fvs.taxe.TaxeGame;
 
 public class Goal {
+	private int rewardScore;
 	private Station origin;
 	private Station destination;
 	private int turnIssued;
@@ -16,6 +18,7 @@ public class Goal {
 		this.origin = origin;
 		this.destination = destination;
 		this.turnIssued = turn;
+		setRewardScore();
 	}
 	
 	public void addConstraint(String name, String value) {
@@ -24,6 +27,28 @@ public class Goal {
 		} else {
 			throw new RuntimeException(name + " is not a valid goal constraint");
 		}
+	}
+	
+	private void setRewardScore() {
+		int distX, distY;
+		if (origin.getLocation().getX() < destination.getLocation().getX()){
+			distX = destination.getLocation().getX() - origin.getLocation().getX();
+		} else {
+			distX = origin.getLocation().getX() - destination.getLocation().getX();
+		}
+		if (origin.getLocation().getY() < destination.getLocation().getY()){
+			distY = destination.getLocation().getY() - origin.getLocation().getY();
+		} else {
+			distY = origin.getLocation().getY() - destination.getLocation().getY();
+		}
+		
+		double dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY,2));
+		double maxDist = Math.sqrt(Math.pow(TaxeGame.HEIGHT,2) + Math.pow(TaxeGame.WIDTH,2));
+		rewardScore = Math.round((float) (30 * (dist/maxDist)));
+	}
+
+	public int getRewardScore() {
+		return rewardScore;
 	}
 
 	public boolean isComplete(Train train) {
@@ -49,7 +74,7 @@ public class Goal {
 		if(trainName != null) {
 			trainString = trainName;
 		}
-		return "Send a " + trainString + " from " + origin.getName() + " to " + destination.getName();
+		return "Send a " + trainString + " from " + origin.getName() + " to " + destination.getName() + " - " + rewardScore + " points";
 	}
 
 	public void setComplete() {
