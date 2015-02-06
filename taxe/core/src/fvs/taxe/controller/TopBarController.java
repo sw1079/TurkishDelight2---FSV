@@ -6,10 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 import fvs.taxe.TaxeGame;
 import gameLogic.GameState;
 import gameLogic.GameStateListener;
-
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class TopBarController {
@@ -36,7 +38,8 @@ public class TopBarController {
                 }
             }
         });
-
+        
+        // TODO need new obstacle listener here to display message, in different colours depending upon obstacle
         createFlashActor();
     }
 

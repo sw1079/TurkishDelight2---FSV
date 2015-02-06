@@ -50,7 +50,9 @@ public class TrainMoveController {
                 // train.setPosition(station.getLocation());
 
                 collisions(station);
+                obstacleCollision(station);
             }
+
         };
     }
 
@@ -100,7 +102,7 @@ public class TrainMoveController {
             return;
         }
 
-        List<Train> trainsToDestroy = trainsToDestroy();
+        List<Train> trainsToDestroy = collidedTrains();
 
         if(trainsToDestroy.size() > 0) {
             for(Train trainToDestroy : trainsToDestroy) {
@@ -108,11 +110,23 @@ public class TrainMoveController {
                 trainToDestroy.getPlayer().removeResource(trainToDestroy);
             }
 
-            context.getTopBarController().displayFlashMessage("Two trains collided at a Junction.  They were both destroyed.", Color.RED, 2);
+            context.getTopBarController().displayFlashMessage("Two trains collided at a Junction.  They were both destroyed.", Color.RED, 4);
         }
     }
+    
+    private void obstacleCollision(Station station) {
+    	// works out if the station has an obstacle active there, whether to destroy the train
+    	// TODO currently always removes train!
+    	if (station.hasObstacle()){
+    		train.getActor().remove();
+    		train.getPlayer().removeResource(train);
+    		context.getTopBarController().displayFlashMessage("Your train was hit by a natural disaster...", Color.RED, 4);
+    	}
+    	
+		
+	}
 
-    private List<Train> trainsToDestroy() {
+    private List<Train> collidedTrains() {
         List<Train> trainsToDestroy = new ArrayList<Train>();
 
         for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {

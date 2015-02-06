@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import fvs.taxe.controller.*;
 import fvs.taxe.dialog.DialogEndGame;
 import gameLogic.Game;
@@ -33,6 +34,7 @@ public class GameScreen extends ScreenAdapter {
     private ResourceController resourceController;
     private GoalController goalController;
     private RouteController routeController;
+	private ObstacleController obstacleController;
 
     public GameScreen(TaxeGame game) {
         this.game = game;
@@ -54,6 +56,7 @@ public class GameScreen extends ScreenAdapter {
         resourceController = new ResourceController(context);
         goalController = new GoalController(context);
         routeController = new RouteController(context);
+        obstacleController = new ObstacleController(context);
 
         context.setRouteController(routeController);
         context.setTopBarController(topBarController);

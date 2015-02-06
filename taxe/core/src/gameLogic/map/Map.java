@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
+import gameLogic.Game;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +20,6 @@ public class Map {
     public Map() {
         stations = new ArrayList<Station>();
         connections = new ArrayList<Connection>();
-
         initialise();
     }
 

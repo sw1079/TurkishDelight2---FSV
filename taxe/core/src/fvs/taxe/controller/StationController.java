@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 import fvs.taxe.StationClickListener;
 import fvs.taxe.TaxeGame;
 import fvs.taxe.Tooltip;
@@ -18,6 +19,8 @@ import gameLogic.map.CollisionStation;
 import gameLogic.map.Connection;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
 import gameLogic.resource.Resource;
 import gameLogic.resource.Train;
 
@@ -29,6 +32,7 @@ public class StationController {
 
     private Context context;
     private Tooltip tooltip;
+   
     /*
     have to use CopyOnWriteArrayList because when we iterate through our listeners and execute
     their handler's method, one case unsubscribes from the event removing itself from this list

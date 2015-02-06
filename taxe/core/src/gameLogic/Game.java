@@ -2,22 +2,33 @@ package gameLogic;
 
 import gameLogic.goal.GoalManager;
 import gameLogic.map.Map;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+import gameLogic.obstacle.ObstacleManager;
 import gameLogic.resource.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
+import Util.Tuple;
+
+import com.badlogic.gdx.math.MathUtils;
 
 public class Game {
 	private static Game instance;
 	private PlayerManager playerManager;
 	private GoalManager goalManager;
 	private ResourceManager resourceManager;
+	private ObstacleManager obstacleManager;
 	private Map map;
 	private GameState state;
 	private List<GameStateListener> gameStateListeners = new ArrayList<GameStateListener>();
+	private List<ObstacleListener> obstacleListeners = new ArrayList<ObstacleListener>();
 
 	private final int CONFIG_PLAYERS = 2;
 	public final int TOTAL_TURNS = 30;
+	
 
 	private Game() {
 		playerManager = new PlayerManager();
@@ -25,8 +36,8 @@ public class Game {
 
 		resourceManager = new ResourceManager();
 		goalManager = new GoalManager(resourceManager);
-		
 		map = new Map();
+		obstacleManager = new ObstacleManager(map);
 		
 		state = GameState.NORMAL;
 
@@ -37,6 +48,8 @@ public class Game {
 				goalManager.addRandomGoalToPlayer(currentPlayer);
 				resourceManager.addRandomResourceToPlayer(currentPlayer);
 				resourceManager.addRandomResourceToPlayer(currentPlayer);
+				calculateObstacles();
+				decreaseObstacleTime();
 			}
 		});
 	}
@@ -94,5 +107,58 @@ public class Game {
 		for(GameStateListener listener : gameStateListeners) {
 			listener.changed(state);
 		}
+	}
+	
+	public ObstacleManager getObstacleManager(){
+		return obstacleManager;
+	}
+	
+	public void obstacleStarted(Obstacle obstacle) {
+		// called whenever an obstacle starts, notifying all listeners that an obstacle has occured (handled by ... 
+		for (ObstacleListener listener : obstacleListeners) {
+			listener.started(obstacle);
+		}
+	}
+	
+	public void obstacleEnded(Obstacle obstacle) {
+		// called whenever an obstacle ends, notifying all listeners that an obstacle has occured (handled by ... 
+		for (ObstacleListener listener : obstacleListeners) {
+			listener.ended(obstacle);
+		}
+	}
+
+	public void subscribeObstacleChanged(ObstacleListener listener) {
+		obstacleListeners.add(listener);
+	}
+	
+	public void calculateObstacles() {
+		// randomly choose one obstacle, then make the obstacle happen with its associated probability
+		ArrayList<Tuple<Obstacle, Float>> obstacles = obstacleManager.getObstacles();
+		int index = MathUtils.random(obstacles.size()-1);
+		
+		Tuple<Obstacle, Float> obstacleProbPair = obstacles.get(index);
+		boolean obstacleOccured = MathUtils.randomBoolean(obstacleProbPair.getSecond());
+		Obstacle obstacle = obstacleProbPair.getFirst();
+		
+		// if it has occured and isnt already active, start the obstacle
+		if(obstacleOccured && !obstacle.isActive()){
+			obstacleStarted(obstacle);
+		}
+	}
+	
+	public void decreaseObstacleTime() {
+		// decreases any active obstacles time left active by 1
+		ArrayList<Tuple<Obstacle, Float>> obstacles = obstacleManager.getObstacles();
+		for (int i = 0; i< obstacles.size(); i++) {
+			Obstacle obstacle = obstacles.get(i).getFirst();
+			if (obstacle.isActive()) {
+				boolean isTimeLeft = obstacle.decreaseTimeLeft();
+				if (!isTimeLeft) {
+					// if the time left = 0, then deactivate the obstacle
+					obstacleEnded(obstacle);
+				}
+			}
+		}
+		
 	}
 }
