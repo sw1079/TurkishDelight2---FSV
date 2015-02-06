@@ -1,0 +1,24 @@
+{
+	"obstacles": [
+	{ 
+	"type": "Volcano",
+	"station": "Rome",
+	"prob": 1
+	},
+	{
+	"type": "Earthquake",
+	"station": "Berlin",
+	"prob": 1
+	},
+	{
+	"type": "Flood",
+	"station": "London",
+	"prob": 1
+	},
+	{
+	"type": "Blizzard",
+	"station": "York",
+	"prob": 1
+	}
+	]
+}
