@@ -86,7 +86,7 @@ public class TrainMoveController {
         }
 
         action.addAction(afterAction());
-
+        System.out.println("finished");
         // remove previous actions to be cautious
         train.getActor().clearActions();
         train.getActor().addAction(action);

@@ -89,6 +89,20 @@ public class Map {
         return false;
     }
 
+    public Connection getConnection(String stationName, String anotherStationName) {
+        for (Connection connection : connections) {
+            String s1 = connection.getStation1().getName();
+            String s2 = connection.getStation2().getName();
+
+            if (s1.equals(stationName) && s2.equals(anotherStationName)
+                || s1.equals(anotherStationName) && s2.equals(stationName)) {
+                return connection;
+            }
+        }
+
+        return null;
+    }
+    
     public Station getRandomStation() {
         return stations.get(random.nextInt(stations.size()));
     }

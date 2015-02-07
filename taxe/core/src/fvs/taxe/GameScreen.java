@@ -18,6 +18,7 @@ import gameLogic.GameState;
 import gameLogic.GameStateListener;
 import gameLogic.TurnListener;
 import gameLogic.map.Map;
+import gameLogic.map.Station;
 import gameLogic.obstacle.Obstacle;
 import gameLogic.obstacle.ObstacleListener;
 import gameLogic.obstacle.ObstacleType;
@@ -81,6 +82,7 @@ public class GameScreen extends ScreenAdapter {
                 topBarController.displayFlashMessage("Time is passing...", Color.BLACK);
             }
         });
+        
         gameLogic.subscribeStateChanged(new GameStateListener() {
         	@Override
         	public void changed(GameState state){
@@ -92,8 +94,6 @@ public class GameScreen extends ScreenAdapter {
         });
         
         gameLogic.subscribeObstacleChanged(new ObstacleListener() {
-			
-
 			@Override
 			public void started(Obstacle obstacle) {
 				// draw the obstacles, redraw the stations and connections to ensure they overlap correctly
@@ -111,6 +111,15 @@ public class GameScreen extends ScreenAdapter {
 				
 			}
 		});
+        
+       StationController.subscribeStationClick(new StationClickListener() {
+			@Override
+			public void clicked(Station station) {
+				 if(gameLogic.getState() == GameState.ROUTING) {
+			            routeController.drawRoute(Color.BLACK);
+			        }
+			}
+		});
     }
 
 
@@ -122,7 +131,6 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        
         if (rumble.time > 0){
         	Vector2 mapPosition = rumble.tick(delta);
         	game.batch.begin();
@@ -133,13 +141,8 @@ public class GameScreen extends ScreenAdapter {
             game.batch.draw(mapTexture, 0, 0);
             game.batch.end();
         }
-        
-
+       
         topBarController.drawBackground();
-        
-        if(gameLogic.getState() == GameState.ROUTING) {
-            routeController.drawRoute(Color.BLACK);
-        }
 
         if(gameLogic.getState() == GameState.ANIMATING) {
             timeAnimated += delta;

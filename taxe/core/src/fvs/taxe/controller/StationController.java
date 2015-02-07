@@ -12,6 +12,7 @@ import fvs.taxe.StationClickListener;
 import fvs.taxe.TaxeGame;
 import fvs.taxe.Tooltip;
 import fvs.taxe.actor.CollisionStationActor;
+import fvs.taxe.actor.ConnectionActor;
 import fvs.taxe.actor.StationActor;
 import fvs.taxe.dialog.DialogStationMultitrain;
 import gameLogic.Game;
@@ -28,6 +29,8 @@ import gameLogic.resource.Train;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.plaf.ActionMapUIResource;
 
 public class StationController {
     public final static int CONNECTION_LINE_WIDTH = 5;
@@ -135,18 +138,9 @@ public class StationController {
         for (Connection connection : connections) {
             final IPositionable start = connection.getStation1().getLocation();
             final IPositionable end = connection.getStation2().getLocation();
-            context.getStage().addActor( new Actor() {
-            	@Override
-            	public void draw(Batch batch, float parentAlpha) {
-            		super.draw(batch, parentAlpha);
-                    batch.end();
-                    game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                    game.shapeRenderer.setColor(color);
-                    game.shapeRenderer.rectLine(start.getX(), start.getY(), end.getX(), end.getY(), CONNECTION_LINE_WIDTH);
-                    game.shapeRenderer.end();
-                    batch.begin();
-            	}
-            });
+            ConnectionActor connectionActor = new ConnectionActor(Color.GRAY, start, end, CONNECTION_LINE_WIDTH);
+            connection.setActor(connectionActor);
+            context.getStage().addActor(connectionActor);
         }
     }
 
