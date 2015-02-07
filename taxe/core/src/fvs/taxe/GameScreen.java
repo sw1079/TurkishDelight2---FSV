@@ -1,10 +1,13 @@
 package fvs.taxe;
 
+import Util.Tuple;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -15,6 +18,10 @@ import gameLogic.GameState;
 import gameLogic.GameStateListener;
 import gameLogic.TurnListener;
 import gameLogic.map.Map;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+import gameLogic.obstacle.ObstacleType;
+import gameLogic.obstacle.Rumble;
 
 
 public class GameScreen extends ScreenAdapter {
@@ -36,6 +43,8 @@ public class GameScreen extends ScreenAdapter {
     private RouteController routeController;
 	private ObstacleController obstacleController;
     private ScoreController scoreController;
+    
+	private Rumble rumble;
 
     public GameScreen(TaxeGame game) {
         this.game = game;
@@ -62,7 +71,9 @@ public class GameScreen extends ScreenAdapter {
 
         context.setRouteController(routeController);
         context.setTopBarController(topBarController);
-
+        
+        rumble = new Rumble();
+        
         gameLogic.getPlayerManager().subscribeTurnChanged(new TurnListener() {
             @Override
             public void changed() {
@@ -79,23 +90,53 @@ public class GameScreen extends ScreenAdapter {
         		}
         	}
         });
+        
+        gameLogic.subscribeObstacleChanged(new ObstacleListener() {
+			
+
+			@Override
+			public void started(Obstacle obstacle) {
+				// draw the obstacles, redraw the stations and connections to ensure they overlap correctly
+				obstacleController.drawObstacles();
+		        stationController.renderConnections(map.getConnections(), Color.GRAY);
+		        stationController.renderStations();
+				if (obstacle.getType() == ObstacleType.EARTHQUAKE) {
+					rumble = new Rumble();
+					rumble.rumble(context, 1f, 2f);
+				}
+			}
+			
+			@Override
+			public void ended(Obstacle obstacle) {
+				
+			}
+		});
     }
 
 
     // called every frame
     @Override
     public void render(float delta) {
+ 
+    	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        game.batch.begin();
-        game.batch.draw(mapTexture, 0, 0);
-        game.batch.end();
+        
+        
+        if (rumble.time > 0){
+        	Vector2 mapPosition = rumble.tick(delta);
+        	game.batch.begin();
+            game.batch.draw(mapTexture, mapPosition.x, mapPosition.y);
+            game.batch.end();
+        } else {
+        	game.batch.begin();
+            game.batch.draw(mapTexture, 0, 0);
+            game.batch.end();
+        }
+        
 
         topBarController.drawBackground();
-
-        stationController.renderConnections(map.getConnections(), Color.GRAY);
-
+        
         if(gameLogic.getState() == GameState.ROUTING) {
             routeController.drawRoute(Color.BLACK);
         }
@@ -122,17 +163,20 @@ public class GameScreen extends ScreenAdapter {
         resourceController.drawHeaderText();
         goalController.showCurrentPlayerGoals();
         scoreController.drawScoreDetails();
+        
+        
     }
 
     @Override
     // Called when GameScreen becomes current screen of the game
     public void show() {
+    	stationController.renderConnections(map.getConnections(), Color.GRAY);
         stationController.renderStations();
         topBarController.addEndTurnButton();
         resourceController.drawPlayerResources(gameLogic.getPlayerManager().getCurrentPlayer());
     }
 
-
+    
     @Override
     public void dispose() {
         mapTexture.dispose();

@@ -2,17 +2,18 @@ package gameLogic.obstacle;
 
 import com.badlogic.gdx.utils.Disposable;
 
+import fvs.taxe.actor.ObstacleActor;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
 
 public class Obstacle implements Disposable {
-	// name? 
-	// image of obstacle - need ObstacleActor?
-	private IPositionable position;
+	// image of obstacle - need ObstacleActor
 	private Station station;
 	private ObstacleType type;
 	private Boolean active;
 	private int time;
+	private IPositionable position;
+	private ObstacleActor actor;
 	
 	public Obstacle(ObstacleType type, Station station) {
 		initialise(type, station);
@@ -60,6 +61,7 @@ public class Obstacle implements Disposable {
 	}
 	
 	private int getDuration() {
+		// get the duration of the obstacle, based upon the type
 		if (type == ObstacleType.BLIZZARD){
 			return 4;
 		} else if (type == ObstacleType.EARTHQUAKE) {
@@ -73,10 +75,24 @@ public class Obstacle implements Disposable {
 		}
 	}
 	
+	public IPositionable getPosition() {
+		return this.position;
+	}
+	
+	public void setActor(ObstacleActor actor){
+		this.actor = actor;
+	}
+	
+	public ObstacleActor getActor(){
+		return this.actor;
+	}
+	
 	@Override
 	public void dispose() {
 		// TODO
 	}
+
+	
 
 	
 

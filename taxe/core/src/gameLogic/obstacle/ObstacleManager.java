@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.JsonValue;
 
 public class ObstacleManager {
 
-	private ArrayList<Tuple<Obstacle,Float>> obstacles; 				// probability of obstacle occurring		
+	private ArrayList<Tuple<Obstacle,Float>> obstacles; 				// obstacle and the probability of obstacle occurring		
 	private Map map;
 	
 	public ObstacleManager(Map map) {

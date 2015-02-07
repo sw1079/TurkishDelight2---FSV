@@ -1,6 +1,8 @@
 package fvs.taxe.controller;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -127,18 +129,25 @@ public class StationController {
         }
     }
 
-    public void renderConnections(List<Connection> connections, Color color) {
-        TaxeGame game = context.getTaxeGame();
-
-        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        game.shapeRenderer.setColor(color);
-
+    public void renderConnections(List<Connection> connections, final Color color) {
+        final TaxeGame game = context.getTaxeGame();
+        
         for (Connection connection : connections) {
-            IPositionable start = connection.getStation1().getLocation();
-            IPositionable end = connection.getStation2().getLocation();
-            game.shapeRenderer.rectLine(start.getX(), start.getY(), end.getX(), end.getY(), CONNECTION_LINE_WIDTH);
+            final IPositionable start = connection.getStation1().getLocation();
+            final IPositionable end = connection.getStation2().getLocation();
+            context.getStage().addActor( new Actor() {
+            	@Override
+            	public void draw(Batch batch, float parentAlpha) {
+            		super.draw(batch, parentAlpha);
+                    batch.end();
+                    game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                    game.shapeRenderer.setColor(color);
+                    game.shapeRenderer.rectLine(start.getX(), start.getY(), end.getX(), end.getY(), CONNECTION_LINE_WIDTH);
+                    game.shapeRenderer.end();
+                    batch.begin();
+            	}
+            });
         }
-        game.shapeRenderer.end();
     }
 
     public void displayNumberOfTrainsAtStations() {
