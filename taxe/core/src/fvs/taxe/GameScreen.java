@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import fvs.taxe.actor.ObstacleActor;
 import fvs.taxe.controller.*;
 import fvs.taxe.dialog.DialogEndGame;
 import gameLogic.Game;
@@ -96,10 +97,8 @@ public class GameScreen extends ScreenAdapter {
         gameLogic.subscribeObstacleChanged(new ObstacleListener() {
 			@Override
 			public void started(Obstacle obstacle) {
-				// draw the obstacles, redraw the stations and connections to ensure they overlap correctly
-				obstacleController.drawObstacles();
-		        stationController.renderConnections(map.getConnections(), Color.GRAY);
-		        stationController.renderStations();
+				// set the obstacle so its visible
+				obstacle.getActor().setVisible(true);
 				if (obstacle.getType() == ObstacleType.EARTHQUAKE) {
 					rumble = new Rumble();
 					rumble.rumble(context, 1f, 2f);
@@ -108,7 +107,7 @@ public class GameScreen extends ScreenAdapter {
 			
 			@Override
 			public void ended(Obstacle obstacle) {
-				
+				obstacle.getActor().setVisible(false);
 			}
 		});
         
@@ -126,8 +125,6 @@ public class GameScreen extends ScreenAdapter {
     // called every frame
     @Override
     public void render(float delta) {
- 
-    	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
@@ -172,7 +169,9 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     // Called when GameScreen becomes current screen of the game
+    // order matters for z-index!
     public void show() {
+    	obstacleController.drawObstacles();
     	stationController.renderConnections(map.getConnections(), Color.GRAY);
         stationController.renderStations();
         topBarController.addEndTurnButton();

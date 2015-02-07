@@ -2,6 +2,8 @@ package fvs.taxe.controller;
 
 import java.util.ArrayList;
 
+import Util.Tuple;
+
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 import fvs.taxe.actor.ObstacleActor;
@@ -13,14 +15,9 @@ import gameLogic.obstacle.ObstacleManager;
 public class ObstacleController {
 
 	private Context context;
-	private ArrayList<ObstacleActor> activeObstacleActors;
-	private Group obstacleActors = new Group();
 	
 	public ObstacleController(Context context) {
-		
-		// needs to have rendering stuff
-		activeObstacleActors = new ArrayList<ObstacleActor>();
-		// takes care of the logic when an obstacle has occurred
+		// take care of rendering of stations (only rendered on map creation)
 		this.context = context;
 		context.getGameLogic().subscribeObstacleChanged(new ObstacleListener() {
 			
@@ -29,9 +26,6 @@ public class ObstacleController {
 				System.out.println("Obstacle has started of type " + obstacle.getType() + " at " + obstacle.getStation().getName());
 				obstacle.start();
 				obstacle.getStation().setObstacle(obstacle); // maybe move to station controller?
-				ObstacleActor obstacleActor = new ObstacleActor(obstacle);
-				obstacle.setActor(obstacleActor);
-				activeObstacleActors.add(obstacleActor);
 			}
 			
 			@Override
@@ -39,24 +33,25 @@ public class ObstacleController {
 				System.out.println("Obstacle has ended of type " + obstacle.getType());
 				obstacle.getStation().clearObstacle();
 				obstacle.end();
-				activeObstacleActors.remove(obstacle);
 			}
 		});
 	}
 	
-	public ArrayList<ObstacleActor> getActiveObstacleActors(){
-		return this.activeObstacleActors;
-	}
-	
 	public void drawObstacles(){
-		obstacleActors.remove();
-		obstacleActors.clear();
-		
-		for (ObstacleActor obstacle : activeObstacleActors){
-			obstacleActors.addActor(obstacle);
+		// needs to only be called once, on map creation
+		// adds all obstacles to the stage but makes them invisible
+		ArrayList<Tuple<Obstacle, Float>> obstaclePairs = context.getGameLogic().getObstacleManager().getObstacles();
+		for (Tuple<Obstacle, Float> obstaclePair: obstaclePairs) {
+			renderObstacle(obstaclePair.getFirst(), false);
 		}
-		
-		context.getStage().addActor(obstacleActors);
+	}
+
+	private ObstacleActor renderObstacle(Obstacle obstacle, boolean visible) {
+		ObstacleActor obstacleActor = new ObstacleActor(obstacle);
+		obstacleActor.setVisible(visible);
+		obstacle.setActor(obstacleActor);
+		context.getStage().addActor(obstacleActor);
+		return obstacleActor;
 	}
 	
 }
