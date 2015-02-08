@@ -2,7 +2,7 @@
 	"obstacles": [
 	{ 
 	"type": "Earthquake",
-	"station": "Rome",
+	"station": "Copenhagen",
 	"prob": 1
 	},
 	{
@@ -17,7 +17,7 @@
 	},
 	{
 	"type": "Earthquake",
-	"station": "York",
+	"station": "Thessaloniki",
 	"prob": 1
 	}
 	]

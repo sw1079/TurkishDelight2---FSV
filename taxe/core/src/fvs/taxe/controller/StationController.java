@@ -91,7 +91,7 @@ public class StationController {
             }
         });
 
-        station.setActor(stationActor);
+       station.setActor(stationActor);
 
         context.getStage().addActor(stationActor);
     }
@@ -100,6 +100,31 @@ public class StationController {
     	final CollisionStationActor collisionStationActor = new CollisionStationActor(collisionStation.getLocation());
 
     	collisionStationActor.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            	System.out.println("collisionStation clicked");
+                if(Game.getInstance().getState() == GameState.NORMAL){
+                	DialogStationMultitrain dia = new DialogStationMultitrain(collisionStation, context.getSkin(), context);
+                	if(dia.getIsTrain()) {
+                		dia.show(context.getStage());
+                	}
+                }
+                stationClicked(collisionStation);
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                tooltip.setPosition(collisionStationActor.getX() + 20, collisionStationActor.getY() + 20);
+                tooltip.show(collisionStation.getName());
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                tooltip.hide();
+            }
+        });
+    	
+    	/*collisionStationActor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 stationClicked(collisionStation);
@@ -115,8 +140,8 @@ public class StationController {
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 tooltip.hide();
             }
-        });
-
+        });*/
+    	//collisionStation.setActor(collisionStationActor);
         context.getStage().addActor(collisionStationActor);
     }
 

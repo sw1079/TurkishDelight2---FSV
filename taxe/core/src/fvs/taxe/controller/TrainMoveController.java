@@ -3,6 +3,7 @@ package fvs.taxe.controller;
 import Util.Tuple;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -26,8 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class TrainMoveController {
+	private static final float JUNCTION_FAILURE_CHANCE = 1f;
 	private Context context;
 	private Train train;
 
@@ -36,8 +39,6 @@ public class TrainMoveController {
 		this.train = train;
 
 		addMoveActions();
-
-		
 	}
 
 	// an action for the train to run before it starts moving across the screen
@@ -61,9 +62,27 @@ public class TrainMoveController {
 
 				collisions(station);
 				obstacleCollision(station);
+				junctionFailure(station);
 			}
 
 		};
+	}
+
+	private void junctionFailure(Station station) {
+		if (station instanceof CollisionStation){
+			boolean junctionFailed = MathUtils.randomBoolean(JUNCTION_FAILURE_CHANCE);
+			if (junctionFailed && station != train.getRoute().get(0)) {
+				System.out.println("Junction failed");
+				context.getGameLogic().getGoalManager().trainArrived(train, train.getPlayer());
+				train.getActor().clearActions();
+				train.setPosition(station.getLocation());
+				train.getActor().setPosition(station.getLocation().getX(), station.getLocation().getY());
+				train.getActor().setVisible(false);
+				train.setFinalDestination(null);
+			
+				context.getTopBarController().displayFlashMessage("Junction failed, train stopped!", Color.BLACK, Color.RED, 2);
+			}
+		}
 	}
 
 	// an action for the train to run after it has moved the whole route
@@ -111,7 +130,6 @@ public class TrainMoveController {
 		if(!(station instanceof CollisionStation)) {
 			return;
 		}
-
 		List<Train> trainsToDestroy = collidedTrains();
 
 		if(trainsToDestroy.size() > 0) {
@@ -126,14 +144,11 @@ public class TrainMoveController {
 
 	private void obstacleCollision(Station station) {
 		// works out if the station has an obstacle active there, whether to destroy the train
-		// TODO currently always removes train!
-		if (station.hasObstacle()){
+		if (station.hasObstacle() && MathUtils.randomBoolean(station.getObstacle().getDestructionChance())){
 			train.getActor().remove();
 			train.getPlayer().removeResource(train);
 			context.getTopBarController().displayFlashMessage("Your train was hit by a natural disaster...", Color.RED, 4);
 		}
-
-
 	}
 
 	private List<Train> collidedTrains() {
@@ -151,7 +166,6 @@ public class TrainMoveController {
 						trainsToDestroy.add(train);
 						trainsToDestroy.add(otherTrain);
 					}
-
 				}
 			}
 		}

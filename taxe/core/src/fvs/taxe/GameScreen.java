@@ -79,8 +79,9 @@ public class GameScreen extends ScreenAdapter {
         gameLogic.getPlayerManager().subscribeTurnChanged(new TurnListener() {
             @Override
             public void changed() {
+            	System.out.println("animating called");
                 gameLogic.setState(GameState.ANIMATING);
-                topBarController.displayFlashMessage("Time is passing...", Color.BLACK);
+                topBarController.displayFlashMessage("Time is passing...", Color.GREEN, Color.BLACK, 2);
             }
         });
         

@@ -37,8 +37,9 @@ public class PlayerManager {
 
 	private void turnChanged() {
 		turnNumber++;
-		for(TurnListener listener : turnListeners) {
-			listener.changed();
+		// reverse iterate to give priority to calls from Game() (obstacles)
+		for(int i = 0; i< turnListeners.size(); i++) {
+			turnListeners.get(turnListeners.size()-1-i).changed();
 		}
 	}
 

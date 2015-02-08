@@ -14,6 +14,7 @@ public class Obstacle implements Disposable {
 	private int time;
 	private IPositionable position;
 	private ObstacleActor actor;
+	private float destructionChance;
 	
 	public Obstacle(ObstacleType type, Station station) {
 		initialise(type, station);
@@ -27,6 +28,21 @@ public class Obstacle implements Disposable {
 		this.active = false;
 	}
 	
+	public float getDestructionChance() {
+		switch(this.type){
+		case BLIZZARD:
+			return 1f;
+		case EARTHQUAKE:
+			return 1f;
+		case FLOOD:
+			return 1f;
+		case VOLCANO:
+			return 1f;
+		default:
+			return 0f;
+		}
+	}
+
 	public Station getStation() {
 		return this.station;
 	}
