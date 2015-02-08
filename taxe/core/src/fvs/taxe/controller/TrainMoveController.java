@@ -1,5 +1,6 @@
 package fvs.taxe.controller;
 
+import Util.InterruptableSequenceAction;
 import Util.Tuple;
 
 import com.badlogic.gdx.graphics.Color;
@@ -15,6 +16,7 @@ import fvs.taxe.actor.TrainActor;
 import gameLogic.GameState;
 import gameLogic.GameStateListener;
 import gameLogic.Player;
+import gameLogic.TurnListener;
 import gameLogic.map.CollisionStation;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Position;
@@ -33,11 +35,20 @@ public class TrainMoveController {
 	private static final float JUNCTION_FAILURE_CHANCE = 1f;
 	private Context context;
 	private Train train;
+	private InterruptableSequenceAction action;
 
-	public TrainMoveController(final Context context, Train train) {
+	public TrainMoveController(final Context context, final Train train) {
 		this.context = context;
 		this.train = train;
 
+		context.getGameLogic().getPlayerManager().subscribeTurnChanged(new TurnListener() {
+			// only set back the interrupt so the train can move after the turn has changed (players turn ended)
+			@Override
+			public void changed() {
+				action.setInterrupt(false);
+			}
+		});
+		
 		addMoveActions();
 	}
 
@@ -59,10 +70,10 @@ public class TrainMoveController {
 				System.out.println("Added to history: passed " + station.getName() + " on turn "
 						+ context.getGameLogic().getPlayerManager().getTurnNumber());
 				// train.setPosition(station.getLocation());
-
+					
+				junctionFailure(station);
 				collisions(station);
 				obstacleCollision(station);
-				junctionFailure(station);
 			}
 
 		};
@@ -72,15 +83,8 @@ public class TrainMoveController {
 		if (station instanceof CollisionStation){
 			boolean junctionFailed = MathUtils.randomBoolean(JUNCTION_FAILURE_CHANCE);
 			if (junctionFailed && station != train.getRoute().get(0)) {
-				System.out.println("Junction failed");
-				context.getGameLogic().getGoalManager().trainArrived(train, train.getPlayer());
-				train.getActor().clearActions();
-				train.setPosition(station.getLocation());
-				train.getActor().setPosition(station.getLocation().getX(), station.getLocation().getY());
-				train.getActor().setVisible(false);
-				train.setFinalDestination(null);
-			
-				context.getTopBarController().displayFlashMessage("Junction failed, train stopped!", Color.BLACK, Color.RED, 2);
+				action.setInterrupt(true);
+				context.getTopBarController().displayObstacleMessage("Junction failed, " + train.getName() + " stopped!", Color.YELLOW);
 			}
 		}
 	}
@@ -102,7 +106,7 @@ public class TrainMoveController {
 	}
 
 	public void addMoveActions() {
-		SequenceAction action = Actions.sequence();
+		action = new InterruptableSequenceAction();
 		IPositionable current = train.getPosition();
 		action.addAction(beforeAction());
 
@@ -110,6 +114,7 @@ public class TrainMoveController {
 			IPositionable next = station.getLocation();
 			float duration = getDistance(current, next) / train.getSpeed();
 			action.addAction(moveTo(next.getX() - TrainActor.width / 2, next.getY() - TrainActor.height / 2, duration));
+			
 			action.addAction(perStationAction(station));
 			current = next;
 		}
@@ -138,7 +143,7 @@ public class TrainMoveController {
 				trainToDestroy.getPlayer().removeResource(trainToDestroy);
 			}
 
-			context.getTopBarController().displayFlashMessage("Two trains collided at a Junction.  They were both destroyed.", Color.RED, 4);
+			context.getTopBarController().displayFlashMessage("Two trains collided at a Junction.  They were both destroyed.", Color.BLACK, Color.RED, 4);
 		}
 	}
 

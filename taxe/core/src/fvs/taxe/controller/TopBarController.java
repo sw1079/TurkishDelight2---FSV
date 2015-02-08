@@ -51,7 +51,7 @@ public class TopBarController {
 					color = Color.valueOf("7a370a");
 					break;
 				}				
-				displayObstacleMessage(obstacle, color);
+				displayObstacleMessage(obstacle.getType().toString() + " in " + obstacle.getStation().getName(), color);
 			}
 
 			@Override
@@ -63,16 +63,16 @@ public class TopBarController {
         createObstacleLabel();
     }
 
-    protected void displayObstacleMessage(Obstacle obstacle, Color color) {
-    	System.out.println("before"  + obstacleLabel.getText());
-		obstacleLabel.setText(obstacle.getType().toString() + " in " + obstacle.getStation().getName());
+    public void displayObstacleMessage(String message, Color color) {
+    	obstacleLabel.clearActions();
+		obstacleLabel.setText(message);
 		obstacleLabel.setColor(Color.BLACK);
 		obstacleColor = color;
 		obstacleLabel.pack();
-		System.out.println("after"  + obstacleLabel.getText());
 		obstacleLabel.addAction(sequence(delay(2f),fadeOut(0.25f), run(new Runnable() {
 			public void run() {
 				obstacleLabel.setText("");
+				obstacleColor = Color.LIGHT_GRAY;
 			}
 		})));
 	}
@@ -87,11 +87,12 @@ public class TopBarController {
 	private void createFlashActor() {
         flashMessage = new Label("", context.getSkin());
         flashMessage.setPosition(450, TaxeGame.HEIGHT - 24);
+        flashMessage.setAlignment(0);
         context.getStage().addActor(flashMessage);
     }
  
     public void displayFlashMessage(String message, Color color) {
-        displayFlashMessage(message, color, 3f);
+        displayFlashMessage(message, color, 2f);
     }
 
     public void displayFlashMessage(String message, Color color, float time) {
@@ -109,7 +110,10 @@ public class TopBarController {
         flashMessage.addAction(sequence(delay(time), fadeOut(0.25f), run(new Runnable() {
 			public void run() {
 				controlsColor = Color.LIGHT_GRAY;
-				obstacleColor = Color.LIGHT_GRAY;
+				System.out.println("top bar finished and word" + obstacleLabel.getText());
+				if (obstacleLabel.getActions().size == 0){
+					obstacleColor = Color.LIGHT_GRAY;
+				}
 			}
 		})));
     }

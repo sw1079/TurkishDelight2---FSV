@@ -5,8 +5,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 
 import fvs.taxe.StationClickListener;
 import fvs.taxe.TaxeGame;
@@ -27,104 +30,78 @@ import gameLogic.obstacle.ObstacleListener;
 import gameLogic.resource.Resource;
 import gameLogic.resource.Train;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.plaf.ActionMapUIResource;
 
 public class StationController {
-    public final static int CONNECTION_LINE_WIDTH = 5;
+	public final static int CONNECTION_LINE_WIDTH = 5;
 
-    private Context context;
-    private Tooltip tooltip;
-   
-    /*
+	private Context context;
+	private Tooltip tooltip;
+
+	/*
     have to use CopyOnWriteArrayList because when we iterate through our listeners and execute
     their handler's method, one case unsubscribes from the event removing itself from this list
     and this list implementation supports removing elements whilst iterating through it
-    */
-    private static List<StationClickListener> stationClickListeners = new CopyOnWriteArrayList<StationClickListener>();
+	 */
+	private static List<StationClickListener> stationClickListeners = new CopyOnWriteArrayList<StationClickListener>();
 
-    public StationController(Context context, Tooltip tooltip) {
-        this.context = context;
-        this.tooltip = tooltip;
-    }
+	public StationController(Context context, Tooltip tooltip) {
+		this.context = context;
+		this.tooltip = tooltip;
+	}
 
-    public static void subscribeStationClick(StationClickListener listener) {
-        stationClickListeners.add(listener);
-    }
+	public static void subscribeStationClick(StationClickListener listener) {
+		stationClickListeners.add(listener);
+	}
 
-    public static void unsubscribeStationClick(StationClickListener listener) {
-        stationClickListeners.remove(listener);
-    }
+	public static void unsubscribeStationClick(StationClickListener listener) {
+		stationClickListeners.remove(listener);
+	}
 
-    private static void stationClicked(Station station) {
-        for (StationClickListener listener : stationClickListeners) {
-            listener.clicked(station);
-        }
-    }
+	private static void stationClicked(Station station) {
+		for (StationClickListener listener : stationClickListeners) {
+			listener.clicked(station);
+		}
+	}
 
-    private void renderStation(final Station station) {
-        final StationActor stationActor = new StationActor(station.getLocation());
+	private void renderStation(final Station station) {
+		final StationActor stationActor = new StationActor(station.getLocation());
 
-        stationActor.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(Game.getInstance().getState() == GameState.NORMAL){
-                	DialogStationMultitrain dia = new DialogStationMultitrain(station, context.getSkin(), context);
-                	if(dia.getIsTrain()) {
-                		dia.show(context.getStage());
-                	}
-                }
-                stationClicked(station);
-            }
+		stationActor.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(Game.getInstance().getState() == GameState.NORMAL){
+					DialogStationMultitrain dia = new DialogStationMultitrain(station, context.getSkin(), context);
+					if(dia.getIsTrain()) {
+						dia.show(context.getStage());
+					}
+				}
+				stationClicked(station);
+			}
 
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                tooltip.setPosition(stationActor.getX() + 20, stationActor.getY() + 20);
-                tooltip.show(station.getName());
-            }
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				tooltip.setPosition(stationActor.getX() + 20, stationActor.getY() + 20);
+				tooltip.show(station.getName());
+			}
 
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                tooltip.hide();
-            }
-        });
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				tooltip.hide();
+			}
+		});
+		station.setActor(stationActor);
+		context.getStage().addActor(stationActor);
+	}
 
-       station.setActor(stationActor);
+	private void renderCollisionStation(final CollisionStation collisionStation) {
+		final CollisionStationActor collisionStationActor = new CollisionStationActor(collisionStation.getLocation());
 
-        context.getStage().addActor(stationActor);
-    }
-
-    private void renderCollisionStation(final Station collisionStation) {
-    	final CollisionStationActor collisionStationActor = new CollisionStationActor(collisionStation.getLocation());
-
-    	collisionStationActor.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-            	System.out.println("collisionStation clicked");
-                if(Game.getInstance().getState() == GameState.NORMAL){
-                	DialogStationMultitrain dia = new DialogStationMultitrain(collisionStation, context.getSkin(), context);
-                	if(dia.getIsTrain()) {
-                		dia.show(context.getStage());
-                	}
-                }
-                stationClicked(collisionStation);
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                tooltip.setPosition(collisionStationActor.getX() + 20, collisionStationActor.getY() + 20);
-                tooltip.show(collisionStation.getName());
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                tooltip.hide();
-            }
-        });
-    	
-    	/*collisionStationActor.addListener(new ClickListener() {
+		collisionStationActor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 stationClicked(collisionStation);
@@ -140,63 +117,59 @@ public class StationController {
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 tooltip.hide();
             }
-        });*/
-    	//collisionStation.setActor(collisionStationActor);
-        context.getStage().addActor(collisionStationActor);
-    }
+        });
+		collisionStation.setActor(collisionStationActor);
+		context.getStage().addActor(collisionStationActor);
+	}
 
-    public void renderStations() {
-        List<Station> stations = context.getGameLogic().getMap().getStations();
+	public void renderStations() {
+		List<Station> stations = context.getGameLogic().getMap().getStations();
 
-        for (Station station : stations) {
-        	if(station instanceof CollisionStation) {
-        		renderCollisionStation(station);
-        	} else {
-        		renderStation(station);
-        	}
-        }
-    }
+		for (Station station : stations) {
+			if(station instanceof CollisionStation) {
+				renderCollisionStation((CollisionStation) station);
+			} else {
+				renderStation(station);
+			}
+		}
+	}
 
-    public void renderConnections(List<Connection> connections, final Color color) {
-        final TaxeGame game = context.getTaxeGame();
-        
-        for (Connection connection : connections) {
-            final IPositionable start = connection.getStation1().getLocation();
-            final IPositionable end = connection.getStation2().getLocation();
-            ConnectionActor connectionActor = new ConnectionActor(Color.GRAY, start, end, CONNECTION_LINE_WIDTH);
-            connection.setActor(connectionActor);
-            context.getStage().addActor(connectionActor);
-        }
-    }
+	public void renderConnections(List<Connection> connections, final Color color) {
+		for (Connection connection : connections) {
+			final IPositionable start = connection.getStation1().getLocation();
+			final IPositionable end = connection.getStation2().getLocation();
+			ConnectionActor connectionActor = new ConnectionActor(Color.GRAY, start, end, CONNECTION_LINE_WIDTH);
+			connection.setActor(connectionActor);
+			context.getStage().addActor(connectionActor);
+		}
+	}
 
-    public void displayNumberOfTrainsAtStations() {
-    	TaxeGame game = context.getTaxeGame();
-		game.batch.begin();
+	public void displayNumberOfTrainsAtStations() {
+		TaxeGame game = context.getTaxeGame();
 		game.fontSmall.setColor(Color.BLACK);
+		game.batch.begin();
+		for(Station station : context.getGameLogic().getMap().getStations()) {
+			if(trainsAtStation(station) > 0) {
+				game.fontSmall.draw(game.batch, trainsAtStation(station) + "", (float) station.getLocation().getX() - 6, (float) station.getLocation().getY() + 26);
+			}
+		}
+		game.batch.end();
+	}
 
-        for(Station station : context.getGameLogic().getMap().getStations()) {
-            if(trainsAtStation(station) > 0) {
-                game.fontSmall.draw(game.batch, trainsAtStation(station) + "", (float) station.getLocation().getX() - 6, (float) station.getLocation().getY() + 26);
-            }
-        }
+	private int trainsAtStation(Station station) {
+		int count = 0;
 
-        game.batch.end();
-    }
-
-    private int trainsAtStation(Station station) {
-        int count = 0;
-
-        for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {
-            for(Resource resource : player.getResources()) {
-                if(resource instanceof Train) {
-                    if(((Train) resource).getActor() != null) {
-                        if(((Train) resource).getPosition().equals(station.getLocation())) {
-                            count++;
-                        }
-                    }
-                }
-            }
-        }
-        return count;
-    }
+		for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {
+			for(Resource resource : player.getResources()) {
+				if(resource instanceof Train) {
+					if(((Train) resource).getActor() != null) {
+						if(((Train) resource).getPosition().equals(station.getLocation())) {
+							count++;
+						}
+					}
+				}
+			}
+		}
+		return count;
+	}
 }
