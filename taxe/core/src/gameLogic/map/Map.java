@@ -1,16 +1,12 @@
 package gameLogic.map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-
-import gameLogic.Game;
-import gameLogic.obstacle.Obstacle;
-import gameLogic.obstacle.ObstacleListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class Map {
     private List<Station> stations;

@@ -1,23 +1,19 @@
 package fvs.taxe.controller;
 
+import fvs.taxe.actor.ObstacleActor;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+
 import java.util.ArrayList;
 
 import Util.Tuple;
-
-import com.badlogic.gdx.scenes.scene2d.Group;
-
-import fvs.taxe.actor.ObstacleActor;
-import gameLogic.map.Map;
-import gameLogic.obstacle.Obstacle;
-import gameLogic.obstacle.ObstacleListener;
-import gameLogic.obstacle.ObstacleManager;
 
 public class ObstacleController {
 
 	private Context context;
 	
 	public ObstacleController(Context context) {
-		// take care of rendering of stations (only rendered on map creation)
+		// take care of rendering of stations (only rendered on map creation, visibility chanegd when active)
 		this.context = context;
 		context.getGameLogic().subscribeObstacleChanged(new ObstacleListener() {
 			
@@ -47,6 +43,7 @@ public class ObstacleController {
 	}
 
 	private ObstacleActor renderObstacle(Obstacle obstacle, boolean visible) {
+		// render the obstacle's actor with the visibility given
 		ObstacleActor obstacleActor = new ObstacleActor(obstacle);
 		obstacleActor.setVisible(visible);
 		obstacle.setActor(obstacleActor);

@@ -5,13 +5,7 @@ import gameLogic.obstacle.Obstacle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.Scaling;
 
 public class ObstacleActor extends Image {
 
@@ -21,7 +15,7 @@ public class ObstacleActor extends Image {
     private static int height = 50;
     // TODO set size correctly (based upon disaster?
 	public ObstacleActor(Obstacle obstacle) {
-		super(getImage(obstacle));
+		super(getTexture(obstacle));
 		
 		obstacle.setActor(this);
 		setSize(width, height);
@@ -29,7 +23,7 @@ public class ObstacleActor extends Image {
 		setPosition(position.getX() - (width/2), position.getY() - (height/2));
 	}
 
-	private static Texture getImage(Obstacle obstacle) {
+	private static Texture getTexture(Obstacle obstacle) {
 		switch(obstacle.getType()){
 		case VOLCANO:
 			return new Texture(Gdx.files.internal("volcano.png"));

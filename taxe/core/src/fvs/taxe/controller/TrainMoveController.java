@@ -1,35 +1,25 @@
 package fvs.taxe.controller;
 
-import Util.InterruptableSequenceAction;
-import Util.Tuple;
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-
-import fvs.taxe.actor.ObstacleActor;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import fvs.taxe.actor.TrainActor;
-import gameLogic.GameState;
-import gameLogic.GameStateListener;
 import gameLogic.Player;
 import gameLogic.TurnListener;
 import gameLogic.map.CollisionStation;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Position;
 import gameLogic.map.Station;
-import gameLogic.obstacle.Obstacle;
 import gameLogic.resource.Resource;
 import gameLogic.resource.Train;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import Util.InterruptableSequenceAction;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 
 public class TrainMoveController {
 	private static final float JUNCTION_FAILURE_CHANCE = 1f;
@@ -80,6 +70,7 @@ public class TrainMoveController {
 	}
 
 	private void junctionFailure(Station station) {
+		// calculate if a junction failure has occured- if it has, stop the train at the station for that turn
 		if (station instanceof CollisionStation){
 			boolean junctionFailed = MathUtils.randomBoolean(JUNCTION_FAILURE_CHANCE);
 			if (junctionFailed && station != train.getRoute().get(0)) {

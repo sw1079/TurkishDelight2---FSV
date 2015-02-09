@@ -3,7 +3,8 @@ package Util;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 public class InterruptableSequenceAction extends SequenceAction {
-	// a sequenceAction that cna be interrupted with setInterrupt. interrupted indefinitely, requires interrupt changing to set back.
+	// a sequenceAction that can be interrupted with setInterrupt. 
+	// interrupted indefinitely, requires interrupt changing to set back.
 	boolean interrupted = false;
 	
 	public InterruptableSequenceAction() {

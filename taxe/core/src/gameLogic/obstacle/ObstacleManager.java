@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.JsonValue;
 
 public class ObstacleManager {
 
+	private static final float DEFAULT_OBSTACLE_PROBABILITY = 0.001f;
 	private ArrayList<Tuple<Obstacle,Float>> obstacles; 				// obstacle and the probability of obstacle occurring		
 	private Map map;
 	
@@ -21,7 +22,7 @@ public class ObstacleManager {
 	}
 
 	private void initialise(Map map) {
-		// set up an array that contains all of the obstacles
+		// parse all of the obstacles from obstacles.json
 		this.map = map;
 
 		JsonReader jsonReader = new JsonReader();
@@ -31,7 +32,7 @@ public class ObstacleManager {
 		for(JsonValue jObstacle = jsonVal.getChild("obstacles"); jObstacle != null; jObstacle = jObstacle.next()) {
 			String typeName = "";
 			String stationName = "";
-			float probability = 0.1f;
+			float probability = DEFAULT_OBSTACLE_PROBABILITY;
 			for(JsonValue val  = jObstacle.child; val != null; val = val.next()) {
 				if(val.name.equalsIgnoreCase("type")) {
 					typeName = val.asString();
@@ -49,6 +50,7 @@ public class ObstacleManager {
 	}
 
 	private Obstacle createObstacle(String typeName, String stationName) {
+		// create the obstacle from the strings given in json file
 		ObstacleType type = null;
 		Station station = null;
 		if (typeName.equalsIgnoreCase("volcano")){

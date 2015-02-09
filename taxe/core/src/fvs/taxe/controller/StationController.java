@@ -1,15 +1,12 @@
 package fvs.taxe.controller;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 
 import fvs.taxe.StationClickListener;
 import fvs.taxe.TaxeGame;
@@ -25,16 +22,8 @@ import gameLogic.map.CollisionStation;
 import gameLogic.map.Connection;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
-import gameLogic.obstacle.Obstacle;
-import gameLogic.obstacle.ObstacleListener;
 import gameLogic.resource.Resource;
 import gameLogic.resource.Train;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.plaf.ActionMapUIResource;
 
 public class StationController {
 	public final static int CONNECTION_LINE_WIDTH = 5;
@@ -118,7 +107,6 @@ public class StationController {
                 tooltip.hide();
             }
         });
-		collisionStation.setActor(collisionStationActor);
 		context.getStage().addActor(collisionStationActor);
 	}
 
@@ -129,6 +117,7 @@ public class StationController {
 			if(station instanceof CollisionStation) {
 				renderCollisionStation((CollisionStation) station);
 			} else {
+				// TODO have selection of different coloured station if goal here
 				renderStation(station);
 			}
 		}

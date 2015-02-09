@@ -9,7 +9,6 @@ import gameLogic.resource.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import Util.Tuple;
 
@@ -140,7 +139,7 @@ public class Game {
 		boolean obstacleOccured = MathUtils.randomBoolean(obstacleProbPair.getSecond());
 		Obstacle obstacle = obstacleProbPair.getFirst();
 		
-		// if it has occured and isnt already active, start the obstacle
+		// if it has occurred and isnt already active, start the obstacle
 		if(obstacleOccured && !obstacle.isActive()){
 			obstacleStarted(obstacle);
 		}

@@ -1,18 +1,13 @@
 package fvs.taxe;
 
-import Util.Tuple;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-
-import fvs.taxe.actor.ObstacleActor;
-import fvs.taxe.controller.*;
+import fvs.taxe.controller.Context;
+import fvs.taxe.controller.GoalController;
+import fvs.taxe.controller.ObstacleController;
+import fvs.taxe.controller.ResourceController;
+import fvs.taxe.controller.RouteController;
+import fvs.taxe.controller.ScoreController;
+import fvs.taxe.controller.StationController;
+import fvs.taxe.controller.TopBarController;
 import fvs.taxe.dialog.DialogEndGame;
 import gameLogic.Game;
 import gameLogic.GameState;
@@ -24,6 +19,15 @@ import gameLogic.obstacle.Obstacle;
 import gameLogic.obstacle.ObstacleListener;
 import gameLogic.obstacle.ObstacleType;
 import gameLogic.obstacle.Rumble;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 
 public class GameScreen extends ScreenAdapter {
@@ -100,6 +104,8 @@ public class GameScreen extends ScreenAdapter {
 			public void started(Obstacle obstacle) {
 				// set the obstacle so its visible
 				obstacle.getActor().setVisible(true);
+				
+				// shake the screen if the obstacle is an earthquake
 				if (obstacle.getType() == ObstacleType.EARTHQUAKE) {
 					rumble = new Rumble();
 					rumble.rumble(context, 1f, 2f);
@@ -115,6 +121,7 @@ public class GameScreen extends ScreenAdapter {
        StationController.subscribeStationClick(new StationClickListener() {
 			@Override
 			public void clicked(Station station) {
+				// if the game is routing, set the route black when a new station is clicked
 				 if(gameLogic.getState() == GameState.ROUTING) {
 			            routeController.drawRoute(Color.BLACK);
 			        }
@@ -149,8 +156,6 @@ public class GameScreen extends ScreenAdapter {
                 timeAnimated = 0;
             }
         }
-        
-        
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -166,12 +171,11 @@ public class GameScreen extends ScreenAdapter {
         if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
         	stationController.displayNumberOfTrainsAtStations();
         }
-        
     }
 
     @Override
     // Called when GameScreen becomes current screen of the game
-    // order matters for z-index!
+    // order methods called matters for z-index!
     public void show() {
     	obstacleController.drawObstacles();
     	stationController.renderConnections(map.getConnections(), Color.GRAY);

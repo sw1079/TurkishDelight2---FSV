@@ -7,14 +7,12 @@ import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
 
 public class Obstacle implements Disposable {
-	// image of obstacle - need ObstacleActor
-	private Station station;
-	private ObstacleType type;
-	private Boolean active;
-	private int time;
-	private IPositionable position;
-	private ObstacleActor actor;
-	private float destructionChance;
+	private Station station;						// station the obstacle is connected to
+	private ObstacleType type;						
+	private Boolean active;							// whether the obstacle is currently active
+	private int time;								// number of turns obstacle has left
+	private IPositionable position;					// position of obstacle
+	private ObstacleActor actor;					// corresponding actor for obstacle, for displaying it
 	
 	public Obstacle(ObstacleType type, Station station) {
 		initialise(type, station);
@@ -106,6 +104,7 @@ public class Obstacle implements Disposable {
 	@Override
 	public void dispose() {
 		// TODO
+		
 	}
 
 	

@@ -1,20 +1,22 @@
 package fvs.taxe.controller;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import fvs.taxe.TaxeGame;
+import gameLogic.GameState;
+import gameLogic.GameStateListener;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+import gameLogic.obstacle.ObstacleType;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-
-import fvs.taxe.TaxeGame;
-import gameLogic.GameState;
-import gameLogic.GameStateListener;
-import gameLogic.map.Station;
-import gameLogic.obstacle.Obstacle;
-import gameLogic.obstacle.ObstacleListener;
-import gameLogic.obstacle.ObstacleType;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
 public class TopBarController {
@@ -56,7 +58,6 @@ public class TopBarController {
 
 			@Override
 			public void ended(Obstacle obstacle) {
-				ObstacleType type = obstacle.getType();
 			}		        	
         });
         createFlashActor();
@@ -64,6 +65,8 @@ public class TopBarController {
     }
 
     public void displayObstacleMessage(String message, Color color) {
+    	// display a message to the obstacle topBar label, with background color color and given message
+    	// wraps automatically to correct size
     	obstacleLabel.clearActions();
 		obstacleLabel.setText(message);
 		obstacleLabel.setColor(Color.BLACK);
@@ -123,9 +126,11 @@ public class TopBarController {
 
         game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         
+        // main topBar
         game.shapeRenderer.setColor(controlsColor);
         game.shapeRenderer.rect(0, TaxeGame.HEIGHT - CONTROLS_HEIGHT, TaxeGame.WIDTH, CONTROLS_HEIGHT);
        
+        // obstacle topBar 
         game.shapeRenderer.setColor(obstacleColor);
         game.shapeRenderer.rect(0, TaxeGame.HEIGHT - CONTROLS_HEIGHT, obstacleLabel.getWidth()+20, CONTROLS_HEIGHT);
         
