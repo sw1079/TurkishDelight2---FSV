@@ -1,12 +1,12 @@
 package gameLogic.map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class Map {
     private List<Station> stations;
@@ -16,7 +16,6 @@ public class Map {
     public Map() {
         stations = new ArrayList<Station>();
         connections = new ArrayList<Connection>();
-
         initialise();
     }
 
@@ -86,6 +85,20 @@ public class Map {
         return false;
     }
 
+    public Connection getConnection(String stationName, String anotherStationName) {
+        for (Connection connection : connections) {
+            String s1 = connection.getStation1().getName();
+            String s2 = connection.getStation2().getName();
+
+            if (s1.equals(stationName) && s2.equals(anotherStationName)
+                || s1.equals(anotherStationName) && s2.equals(stationName)) {
+                return connection;
+            }
+        }
+
+        return null;
+    }
+    
     public Station getRandomStation() {
         return stations.get(random.nextInt(stations.size()));
     }

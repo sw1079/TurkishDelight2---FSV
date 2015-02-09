@@ -1,19 +1,33 @@
 package fvs.taxe;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import fvs.taxe.controller.*;
+import fvs.taxe.controller.Context;
+import fvs.taxe.controller.GoalController;
+import fvs.taxe.controller.ObstacleController;
+import fvs.taxe.controller.ResourceController;
+import fvs.taxe.controller.RouteController;
+import fvs.taxe.controller.ScoreController;
+import fvs.taxe.controller.StationController;
+import fvs.taxe.controller.TopBarController;
 import fvs.taxe.dialog.DialogEndGame;
 import gameLogic.Game;
 import gameLogic.GameState;
 import gameLogic.GameStateListener;
 import gameLogic.TurnListener;
 import gameLogic.map.Map;
+import gameLogic.map.Station;
+import gameLogic.obstacle.Obstacle;
+import gameLogic.obstacle.ObstacleListener;
+import gameLogic.obstacle.ObstacleType;
+import gameLogic.obstacle.Rumble;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 
 public class GameScreen extends ScreenAdapter {
@@ -33,7 +47,10 @@ public class GameScreen extends ScreenAdapter {
     private ResourceController resourceController;
     private GoalController goalController;
     private RouteController routeController;
+	private ObstacleController obstacleController;
     private ScoreController scoreController;
+    
+	private Rumble rumble;
 
     public GameScreen(TaxeGame game) {
         this.game = game;
@@ -55,18 +72,23 @@ public class GameScreen extends ScreenAdapter {
         resourceController = new ResourceController(context);
         goalController = new GoalController(context);
         routeController = new RouteController(context);
+        obstacleController = new ObstacleController(context);
         scoreController = new ScoreController(context);
 
         context.setRouteController(routeController);
         context.setTopBarController(topBarController);
-
+        
+        rumble = new Rumble();
+        
         gameLogic.getPlayerManager().subscribeTurnChanged(new TurnListener() {
             @Override
             public void changed() {
+            	System.out.println("animating called");
                 gameLogic.setState(GameState.ANIMATING);
-                topBarController.displayFlashMessage("Time is passing...", Color.BLACK);
+                topBarController.displayFlashMessage("Time is passing...", Color.GREEN, Color.BLACK, ANIMATION_TIME);
             }
         });
+        
         gameLogic.subscribeStateChanged(new GameStateListener() {
         	@Override
         	public void changed(GameState state){
@@ -76,6 +98,35 @@ public class GameScreen extends ScreenAdapter {
         		}
         	}
         });
+        
+        gameLogic.subscribeObstacleChanged(new ObstacleListener() {
+			@Override
+			public void started(Obstacle obstacle) {
+				// set the obstacle so its visible
+				obstacle.getActor().setVisible(true);
+				
+				// shake the screen if the obstacle is an earthquake
+				if (obstacle.getType() == ObstacleType.EARTHQUAKE) {
+					rumble = new Rumble();
+					rumble.rumble(context, 1f, 2f);
+				}
+			}
+			
+			@Override
+			public void ended(Obstacle obstacle) {
+				obstacle.getActor().setVisible(false);
+			}
+		});
+        
+       StationController.subscribeStationClick(new StationClickListener() {
+			@Override
+			public void clicked(Station station) {
+				// if the game is routing, set the route black when a new station is clicked
+				 if(gameLogic.getState() == GameState.ROUTING) {
+			            routeController.drawRoute(Color.BLACK);
+			        }
+			}
+		});
     }
 
 
@@ -84,18 +135,19 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        game.batch.begin();
-        game.batch.draw(mapTexture, 0, 0);
-        game.batch.end();
-
-        topBarController.drawBackground();
-
-        stationController.renderConnections(map.getConnections(), Color.GRAY);
-
-        if(gameLogic.getState() == GameState.ROUTING) {
-            routeController.drawRoute(Color.BLACK);
+        
+        if (rumble.time > 0){
+        	Vector2 mapPosition = rumble.tick(delta);
+        	game.batch.begin();
+            game.batch.draw(mapTexture, mapPosition.x, mapPosition.y);
+            game.batch.end();
+        } else {
+        	game.batch.begin();
+            game.batch.draw(mapTexture, 0, 0);
+            game.batch.end();
         }
+       
+        topBarController.drawBackground();
 
         if(gameLogic.getState() == GameState.ANIMATING) {
             timeAnimated += delta;
@@ -103,10 +155,6 @@ public class GameScreen extends ScreenAdapter {
                 gameLogic.setState(GameState.NORMAL);
                 timeAnimated = 0;
             }
-        }
-        
-        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
-        	stationController.displayNumberOfTrainsAtStations();
         }
 
         stage.act(Gdx.graphics.getDeltaTime());
@@ -119,17 +167,24 @@ public class GameScreen extends ScreenAdapter {
         resourceController.drawHeaderText();
         goalController.showCurrentPlayerGoals();
         scoreController.drawScoreDetails();
+        
+        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
+        	stationController.displayNumberOfTrainsAtStations();
+        }
     }
 
     @Override
     // Called when GameScreen becomes current screen of the game
+    // order methods called matters for z-index!
     public void show() {
+    	obstacleController.drawObstacles();
+    	stationController.renderConnections(map.getConnections(), Color.GRAY);
         stationController.renderStations();
         topBarController.addEndTurnButton();
         resourceController.drawPlayerResources(gameLogic.getPlayerManager().getCurrentPlayer());
     }
 
-
+    
     @Override
     public void dispose() {
         mapTexture.dispose();

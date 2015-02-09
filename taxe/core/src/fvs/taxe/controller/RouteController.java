@@ -1,15 +1,10 @@
 package fvs.taxe.controller;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import fvs.taxe.StationClickListener;
 import fvs.taxe.TaxeGame;
 import gameLogic.GameState;
 import gameLogic.map.CollisionStation;
+import gameLogic.map.Connection;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
 import gameLogic.resource.Train;
@@ -17,10 +12,17 @@ import gameLogic.resource.Train;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 public class RouteController {
     private Context context;
     private Group routingButtons = new Group();
     private List<IPositionable> positions;
+    private List<Connection> connections;
     private boolean isRouting = false;
     private Train train;
     private boolean canEndRouting = true;
@@ -42,6 +44,7 @@ public class RouteController {
         this.train = train;
         isRouting = true;
         positions = new ArrayList<IPositionable>();
+        connections = new ArrayList<Connection>();
         positions.add(train.getPosition());
         context.getGameLogic().setState(GameState.ROUTING);
         addRoutingButtons();
@@ -57,11 +60,11 @@ public class RouteController {
         Station lastStation = context.getGameLogic().getMap().getStationFromPosition(lastPosition);
 
         boolean hasConnection = context.getGameLogic().getMap().doesConnectionExist(station.getName(), lastStation.getName());
-
         if(!hasConnection) {
             context.getTopBarController().displayFlashMessage("This connection doesn't exist", Color.RED);
         } else {
             positions.add(station.getLocation());
+            connections.add(context.getGameLogic().getMap().getConnection(station.getName(), lastStation.getName()));
             canEndRouting = !(station instanceof CollisionStation);
         }
     }
@@ -113,24 +116,13 @@ public class RouteController {
         TrainController trainController = new TrainController(context);
         trainController.setTrainsVisible(train, true);
         train.getActor().setVisible(false);
+        
+        drawRoute(Color.GRAY);
     }
 
     public void drawRoute(Color color) {
-        TaxeGame game = context.getTaxeGame();
-
-        IPositionable previousPosition = null;
-        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        game.shapeRenderer.setColor(color);
-
-        for(IPositionable position : positions) {
-            if(previousPosition != null) {
-                game.shapeRenderer.rectLine(previousPosition.getX(), previousPosition.getY(), position.getX(),
-                        position.getY(), StationController.CONNECTION_LINE_WIDTH);
-            }
-
-            previousPosition = position;
+        for (Connection connection : connections) {
+        	connection.getActor().setConnectionColor(color);
         }
-
-        game.shapeRenderer.end();
     }
 }

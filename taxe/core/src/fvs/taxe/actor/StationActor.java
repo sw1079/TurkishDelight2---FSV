@@ -11,8 +11,10 @@ public class StationActor extends Image {
 
     public StationActor(IPositionable location) {
         super(new Texture(Gdx.files.internal("station_dot.png")));
-
+        
         setSize(width, height);
         setPosition(location.getX() - width / 2, location.getY() - height / 2);
     }
+    
+    
 }
