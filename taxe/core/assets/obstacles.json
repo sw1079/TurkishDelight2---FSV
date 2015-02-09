@@ -6,17 +6,17 @@
 	"prob": 1
 	},
 	{
-	"type": “Volcano”,
+	"type": "Volcano",
 	"station": "Berlin",
 	"prob": 1
 	},
 	{
-	"type": “Flood”,
+	"type": "Flood",
 	"station": "London",
 	"prob": 1
 	},
 	{
-	"type": “Blizzard”,
+	"type": "Blizzard",
 	"station": "Thessaloniki",
 	"prob": 1
 	}
