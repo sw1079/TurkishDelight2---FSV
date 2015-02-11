@@ -44,7 +44,7 @@ public class Game {
 			@Override
 			public void changed() {
 				Player currentPlayer = playerManager.getCurrentPlayer();
-				goalManager.addRandomGoalToPlayer(currentPlayer);
+				goalManager.updatePlayerGoals(currentPlayer);
 				resourceManager.addRandomResourceToPlayer(currentPlayer);
 				resourceManager.addRandomResourceToPlayer(currentPlayer);
 				calculateObstacles();
@@ -68,7 +68,7 @@ public class Game {
 	// The second player gets them when turn changes!
 	private void initialisePlayers() {
 		Player player = playerManager.getAllPlayers().get(0);
-		goalManager.addRandomGoalToPlayer(player);
+		goalManager.updatePlayerGoals(player);
 		resourceManager.addRandomResourceToPlayer(player);
 		resourceManager.addRandomResourceToPlayer(player);
 	}

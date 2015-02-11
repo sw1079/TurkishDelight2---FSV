@@ -44,6 +44,18 @@ public class ResourceManager {
 		}
 		return names;
 	}
+    
+    public int getTrainSpeed(String trainName)
+    {
+    	for(Tuple<String, Integer> train : trains)
+    	{
+    		if(train.getFirst().equals(trainName))
+    		{
+    			return train.getSecond();
+    		}
+    	}
+    	return 0;
+    }
 	
 	public ArrayList<Tuple<String, Integer>> getTrains() {
 		return trains;
@@ -69,4 +81,6 @@ public class ResourceManager {
         resource.setPlayer(player);
         player.addResource(resource);
     }
+    
+    
 }
