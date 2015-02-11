@@ -18,7 +18,7 @@ public class DialogResourceTrain extends Dialog {
         text("What do you want to do with this train?");
 
         button("Cancel", "CLOSE");
-        button("Drop", "DROP");
+        button("Delete", "DELETE");
 
         if (!trainPlaced) {
             button("Place at a station", "PLACE");
@@ -53,7 +53,7 @@ public class DialogResourceTrain extends Dialog {
     protected void result(Object obj) {
         if (obj == "CLOSE") {
             this.remove();
-        } else if (obj == "DROP") {
+        } else if (obj == "DELETE") {
             clicked(Button.TRAIN_DROP);
         } else if(obj == "PLACE") {
             clicked(Button.TRAIN_PLACE);

@@ -86,6 +86,7 @@ public class GameScreen extends ScreenAdapter {
             	System.out.println("animating called");
                 gameLogic.setState(GameState.ANIMATING);
                 topBarController.displayFlashMessage("Time is passing...", Color.GREEN, Color.BLACK, ANIMATION_TIME);
+                //goalController.showCurrentPlayerGoals();
             }
         });
         
@@ -157,6 +158,13 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
+        
+       
+        
+        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
+        	stationController.displayNumberOfTrainsAtStations();
+        }
+        
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         
@@ -165,12 +173,11 @@ public class GameScreen extends ScreenAdapter {
         game.batch.end();
 
         resourceController.drawHeaderText();
-        goalController.showCurrentPlayerGoals();
+        goalController.drawHeaderText();
         scoreController.drawScoreDetails();
         
-        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
-        	stationController.displayNumberOfTrainsAtStations();
-        }
+        
+        
     }
 
     @Override
@@ -182,6 +189,8 @@ public class GameScreen extends ScreenAdapter {
         stationController.renderStations();
         topBarController.addEndTurnButton();
         resourceController.drawPlayerResources(gameLogic.getPlayerManager().getCurrentPlayer());
+        goalController.showCurrentPlayerGoals();
+        
     }
 
     

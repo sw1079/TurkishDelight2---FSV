@@ -18,9 +18,11 @@ import Util.Tuple;
 public class GoalManager {
 	public final static int CONFIG_MAX_PLAYER_GOALS = 3;
 	private ResourceManager resourceManager;
+	private List<GoalListener> listeners;
 	
 	public GoalManager(ResourceManager resourceManager) {
 		this.resourceManager = resourceManager;
+		listeners = new ArrayList<GoalListener>();
 	}
 
 	public Goal generateRandomGoal(int turn, int extraConstraints) {
@@ -89,9 +91,20 @@ public class GoalManager {
 				player.completeGoal(goal);
 				player.removeResource(train);
 				completedString.add("Player " + player.getPlayerNumber() + " completed a goal to " + goal.toString() + "!");
+				goalFinished(goal);
 			}
 		}
 		System.out.println("Train arrived to final destination: " + train.getFinalDestination().getName());
 		return completedString;
+	}
+
+	public void subscribeGoalFinished(GoalListener goalFinishedListener) {
+		listeners.add(goalFinishedListener);
+	}
+	
+	public void goalFinished(Goal goal) {
+		for (GoalListener listener : listeners){
+			listener.finished(goal);
+		}
 	}
 }
