@@ -157,16 +157,13 @@ public class GameScreen extends ScreenAdapter {
                 timeAnimated = 0;
             }
         }
-
         
-       
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
         
         if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
         	stationController.displayNumberOfTrainsAtStations();
         }
-        
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
         
         game.batch.begin();
         game.fontSmall.draw(game.batch, "Turn " + (gameLogic.getPlayerManager().getTurnNumber() + 1) + "/" + gameLogic.TOTAL_TURNS, (float) TaxeGame.WIDTH - 90.0f, 20.0f);

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import fvs.taxe.StationClickListener;
@@ -119,7 +117,6 @@ public class StationController {
 			if(station instanceof CollisionStation) {
 				renderCollisionStation((CollisionStation) station);
 			} else {
-				// TODO have selection of different coloured station if goal here
 				renderStation(station);
 			}
 		}
@@ -150,13 +147,23 @@ public class StationController {
 	private int trainsAtStation(Station station) {
 		int count = 0;
 
-		for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {
+		/*for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {
 			for(Resource resource : player.getResources()) {
 				if(resource instanceof Train) {
 					if(((Train) resource).getActor() != null) {
 						if(((Train) resource).getPosition().equals(station.getLocation())) {
 							count++;
 						}
+					}
+				}
+			}
+		}*/
+		Player player = context.getGameLogic().getPlayerManager().getCurrentPlayer();
+		for(Resource resource : player.getResources()) {
+			if(resource instanceof Train) {
+				if(((Train) resource).getActor() != null) {
+					if(((Train) resource).getPosition().equals(station.getLocation())) {
+						count++;
 					}
 				}
 			}

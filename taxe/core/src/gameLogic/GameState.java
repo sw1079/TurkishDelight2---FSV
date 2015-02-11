@@ -4,5 +4,6 @@ public enum GameState {
     NORMAL,
     PLACING,
     ROUTING,
-    ANIMATING
+    ANIMATING,
+    WAITING
 }

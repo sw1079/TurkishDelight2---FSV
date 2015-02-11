@@ -1,23 +1,17 @@
 package fvs.taxe.dialog;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
-
-import fvs.taxe.controller.Context;
 import gameLogic.goal.Goal;
 import gameLogic.map.Station;
+
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class GoalClickedListener extends ClickListener {
 
 	private Goal goal;
-	private Context context;
 
-	public GoalClickedListener(Context context, Goal goal) {
+	public GoalClickedListener(Goal goal) {
 		this.goal = goal;
-		this.context = context;
 	}
 
 	@Override

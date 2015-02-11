@@ -1,20 +1,25 @@
 package fvs.taxe.dialog;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import fvs.taxe.Button;
-import gameLogic.resource.Train;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+import fvs.taxe.Button;
+import fvs.taxe.controller.Context;
+import gameLogic.GameState;
+import gameLogic.resource.Train;
+
 public class DialogResourceTrain extends Dialog {
     private List<ResourceDialogClickListener> clickListeners = new ArrayList<ResourceDialogClickListener>();
+	private Context context;
 
-    public DialogResourceTrain(Train train, Skin skin, boolean trainPlaced) {
+    public DialogResourceTrain(Context context, Train train, Skin skin, boolean trainPlaced) {
         super(train.toString(), skin);
-
+        this.context = context;
+        context.getGameLogic().setState(GameState.WAITING);
         text("What do you want to do with this train?");
 
         button("Cancel", "CLOSE");
@@ -51,6 +56,7 @@ public class DialogResourceTrain extends Dialog {
 
     @Override
     protected void result(Object obj) {
+    	context.getGameLogic().setState(GameState.NORMAL);
         if (obj == "CLOSE") {
             this.remove();
         } else if (obj == "DELETE") {
@@ -60,5 +66,6 @@ public class DialogResourceTrain extends Dialog {
         } else if(obj == "ROUTE") {
             clicked(Button.TRAIN_ROUTE);
         }
+        
     }
 }

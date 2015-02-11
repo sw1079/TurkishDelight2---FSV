@@ -1,18 +1,7 @@
 package fvs.taxe.controller;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-
 import fvs.taxe.TaxeGame;
 import fvs.taxe.dialog.GoalClickedListener;
-import gameLogic.Game;
 import gameLogic.Player;
 import gameLogic.PlayerChangedListener;
 import gameLogic.PlayerManager;
@@ -21,6 +10,10 @@ import gameLogic.goal.GoalListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 public class GoalController {
 	private Context context;
@@ -82,17 +75,9 @@ public class GoalController {
 			y-=30;
 			TextButton button  = new TextButton(goal.toString(), context.getSkin());
 			button.setPosition(x,y);
-			button.addListener(new GoalClickedListener(context, goal));
+			button.addListener(new GoalClickedListener(goal));
 			goalButtons.addActor(button);
 		}
-		//  for (String goalString : playerGoalStrings()) {
-			/*  y -= 30;
-
-            TextButton button  = new TextButton(goalString, context.getSkin());
-            button.setPosition(x,y);
-            button.addListener(new GoalClickedListener(context, goalString));
-            goalButtons.addActor(button);*/
-            //  }
 
 		context.getStage().addActor(goalButtons);
 	}

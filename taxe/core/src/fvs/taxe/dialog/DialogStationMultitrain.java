@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import fvs.taxe.controller.Context;
-import gameLogic.Player;
+import gameLogic.GameState;
 import gameLogic.map.Station;
 import gameLogic.resource.Resource;
 import gameLogic.resource.Train;
@@ -43,11 +43,10 @@ public class DialogStationMultitrain extends Dialog {
 		if (localTrains.size() == 0) {
 			hide();
 			context.getTopBarController().displayFlashMessage("No Player " + context.getGameLogic().getPlayerManager().getCurrentPlayer().getPlayerNumber() + " trains at this station", Color.RED);
-			//return;
 		} else if (localTrains.size() == 1) {
 			hide();
 			result(localTrains.get(0));
-			//return;
+			context.getGameLogic().setState(GameState.WAITING);
 		} else {
 			for (Resource resource : localTrains){
 				String destination = "";
@@ -58,39 +57,10 @@ public class DialogStationMultitrain extends Dialog {
 				getButtonTable().row();
 				isTrain = true;
 			}
+			context.getGameLogic().setState(GameState.WAITING);
 		}
-		/*for(Player player : context.getGameLogic().getPlayerManager().getAllPlayers()) {
-			boolean currentPlayer = player.equals(context.getGameLogic().getPlayerManager().getCurrentPlayer());
-			for(Resource resource : player.getResources()) {
-				
-				if(resource instanceof Train) {
-					if(((Train) resource).getPosition() == station.getLocation()) {
-						String destination = "";
-						if(((Train) resource).getFinalDestination() != null) {
-							destination = " to " + ((Train) resource).getFinalDestination().getName();
-						}
-						button(((Train) resource).getName() + destination + " (Player " + ((Train) resource).getPlayer().getPlayerNumber() + ")", ((Train) resource));
-						getButtonTable().row();
-						isTrain = true;
-						if (currentPlayer) {
-							i++;
-						} if (i == 1) {
-							 train = (Train) resource;
-						}
-					}
-				}
-			}
-		}*/
-		
-		
 
 		button("Cancel","CANCEL");
-		/*if(!isTrain) {
-			hide();
-		}*/
-		
-		
-
 	}
 
 	@Override
@@ -107,6 +77,7 @@ public class DialogStationMultitrain extends Dialog {
 
 	@Override
 	protected void result(Object obj) {
+		context.getGameLogic().setState(GameState.NORMAL);
 		if(obj == "CANCEL"){
 			this.remove();
 		} else {
@@ -114,6 +85,7 @@ public class DialogStationMultitrain extends Dialog {
 			TrainClicked clicker = new TrainClicked(context, (Train) obj);
 			clicker.clicked(null, 0, 0);
 		}
+		
 	}
 
 	public boolean getIsTrain() {
