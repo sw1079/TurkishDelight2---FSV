@@ -25,7 +25,6 @@ public class GoalManagerTest extends LibGdxTest {
         ResourceManager rs = new ResourceManager();
         gm = new GoalManager(rs);
         pm = new PlayerManager();
-
     }
 
     @Test

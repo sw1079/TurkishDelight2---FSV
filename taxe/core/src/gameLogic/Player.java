@@ -47,7 +47,7 @@ public class Player {
         changed();
     }
 
-    private void addGoal(Goal goal) {
+    public void addGoal(Goal goal) {
     	int incompleteGoals = 0;
     	for(Goal existingGoal : goals) {
     		if(!existingGoal.getComplete()) {
