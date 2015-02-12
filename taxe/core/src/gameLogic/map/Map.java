@@ -1,7 +1,5 @@
 package gameLogic.map;
 
-import gameLogic.Game;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
