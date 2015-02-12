@@ -86,6 +86,7 @@ public class GameScreen extends ScreenAdapter {
             	System.out.println("animating called");
                 gameLogic.setState(GameState.ANIMATING);
                 topBarController.displayFlashMessage("Time is passing...", Color.GREEN, Color.BLACK, ANIMATION_TIME);
+                //goalController.showCurrentPlayerGoals();
             }
         });
         
@@ -156,21 +157,24 @@ public class GameScreen extends ScreenAdapter {
                 timeAnimated = 0;
             }
         }
-
+        
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        
+        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
+        	stationController.displayNumberOfTrainsAtStations();
+        }
         
         game.batch.begin();
         game.fontSmall.draw(game.batch, "Turn " + (gameLogic.getPlayerManager().getTurnNumber() + 1) + "/" + gameLogic.TOTAL_TURNS, (float) TaxeGame.WIDTH - 90.0f, 20.0f);
         game.batch.end();
 
         resourceController.drawHeaderText();
-        goalController.showCurrentPlayerGoals();
+        goalController.drawHeaderText();
         scoreController.drawScoreDetails();
         
-        if(gameLogic.getState() == GameState.NORMAL || gameLogic.getState() == GameState.PLACING){
-        	stationController.displayNumberOfTrainsAtStations();
-        }
+        
+        
     }
 
     @Override
@@ -182,6 +186,8 @@ public class GameScreen extends ScreenAdapter {
         stationController.renderStations();
         topBarController.addEndTurnButton();
         resourceController.drawPlayerResources(gameLogic.getPlayerManager().getCurrentPlayer());
+        goalController.showCurrentPlayerGoals();
+        
     }
 
     
