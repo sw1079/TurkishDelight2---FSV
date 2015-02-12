@@ -75,6 +75,8 @@ public class GoalManager {
 		{
 			list.add(new Tuple<String, Object>("exclusion", idealRoute.get(1 + new Random().nextInt(idealRoute.size() - 2))));
 		}
+		//Add a constraint of the maximum number of journeys a train can make to get between the 2 locations, the length of the ideal route + 1 (since the ideal route contains the origin)
+		list.add(new Tuple<String, Object>("locations", idealRoute.size()));
 		return list;
 	}
 	

@@ -18,6 +18,7 @@ public class Goal {
 	//-1 Indicates currently unused for integer constraints
 	private int turnCount = -1;
 	private int trainCount = -1;
+	private int locationCount = -1;
 	private int constraintCount = 0;
 	private Station exclusionStation;
 	private ArrayList<Train> completedTrains;
@@ -69,6 +70,10 @@ public class Goal {
 		else if(name.equals("exclusion")){
 			exclusionStation = (Station)value;
 		}
+		else if(name.equals("locations"))
+		{
+			locationCount = (Integer)value;
+		}
 		else
 		{
 			throw new RuntimeException(name + " is not a valid goal constraint");
@@ -102,11 +107,20 @@ public class Goal {
 	public boolean isComplete(Train train) {
 		boolean passedOrigin = false;
 		boolean passedExclusion = false;
+		int locationCountClone = -1;
 		int originTurn = 0;
 		for(Tuple<String, Integer> history: train.getHistory()) {
 			if(history.getFirst().equals(origin.getName()) && history.getSecond() >= turnIssued) {
 				passedOrigin = true;
 				originTurn = history.getSecond();
+				locationCountClone = locationCount;
+			}
+			else
+			{
+				if(locationCountClone > -1)
+				{
+					locationCountClone--;
+				}
 			}
 		}
 		if(exclusionStation != null && passedOrigin)
@@ -117,7 +131,7 @@ public class Goal {
 				}
 			}
 		}
-		if(train.getFinalDestination() == destination && passedOrigin && !passedExclusion) {
+		if(train.getFinalDestination() == destination && passedOrigin && !passedExclusion && locationCountClone <= 1) {
 			if(trainName == null || trainName.equals(train.getName())) 
 			{
 				//The train has completed the goal criteria. Determine whether it is a single or multiple criteria
@@ -187,9 +201,14 @@ public class Goal {
 		String exclusionString = "";
 		if(exclusionStation != null)
 		{
-			exclusionString = " avoiding " + exclusionStation.getName() + " ";
+			exclusionString = " avoiding " + exclusionStation.getName() ;
 		}
-		return "Send " + trainCountString + trainString + " from " + origin.getName() + " to " + destination.getName() + exclusionString + turnString + " - " + rewardScore + " points";
+		String journeyString = "";
+		if(locationCount != -1)
+		{
+			journeyString = " in less than " + locationCount + " journeys";
+		}
+		return "Send " + trainCountString + trainString + " from " + origin.getName() + " to " + destination.getName() + exclusionString + journeyString + turnString + " - " + rewardScore + " points";
 	}
 
 	public void setComplete() {
