@@ -1,12 +1,10 @@
 package gameLogic.obstacle;
 
-import com.badlogic.gdx.utils.Disposable;
-
 import fvs.taxe.actor.ObstacleActor;
 import gameLogic.map.IPositionable;
 import gameLogic.map.Station;
 
-public class Obstacle implements Disposable {
+public class Obstacle {
 	private Station station;						// station the obstacle is connected to
 	private ObstacleType type;						
 	private Boolean active;							// whether the obstacle is currently active
@@ -64,6 +62,10 @@ public class Obstacle implements Disposable {
 		this.active = false;
 	}
 
+	public int getTimeLeft() {
+		return this.time;
+	}
+	
 	public boolean decreaseTimeLeft() {
 		// returns true if time left, false if no time left
 		if (time > 0){
@@ -100,15 +102,4 @@ public class Obstacle implements Disposable {
 	public ObstacleActor getActor(){
 		return this.actor;
 	}
-	
-	@Override
-	public void dispose() {
-		// TODO
-		
-	}
-
-	
-
-	
-
 }

@@ -36,7 +36,7 @@ public class TrainClicked extends ClickListener {
             context.getTopBarController().displayFlashMessage("Your " + train.getName() + ". Speed: " + train.getSpeed() + ". Destination: " + train.getFinalDestination().getName(), Color.BLACK, 2);
         }
         DialogButtonClicked listener = new DialogButtonClicked(context, currentPlayer, train);
-        DialogResourceTrain dia = new DialogResourceTrain(train, context.getSkin(), train.getPosition() != null);
+        DialogResourceTrain dia = new DialogResourceTrain(context, train, context.getSkin(), train.getPosition() != null);
         dia.show(context.getStage());
         dia.subscribeClick(listener);
     }

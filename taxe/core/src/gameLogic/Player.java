@@ -3,6 +3,7 @@ package gameLogic;
 import gameLogic.goal.Goal;
 import gameLogic.goal.GoalManager;
 import gameLogic.resource.Resource;
+import gameLogic.resource.Train;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,18 @@ public class Player {
     public List<Resource> getResources() {
         return resources;
     }
+    
+    public List<Resource> getActiveTrains() {
+    	List<Resource> activeResources = new ArrayList<Resource>();
+    	for (Resource resource: resources) {
+    		if (resource instanceof Train) {
+    			if(((Train) resource).getPosition() != null) {
+    				activeResources.add(resource);
+    			}
+    		}
+    	}
+    	return activeResources;
+    }
 
     public void addResource(Resource resource) {
         resources.add(resource);
@@ -47,7 +60,7 @@ public class Player {
         changed();
     }
 
-    private void addGoal(Goal goal) {
+    public void addGoal(Goal goal) {
     	int incompleteGoals = 0;
     	for(Goal existingGoal : goals) {
     		if(!existingGoal.getComplete()) {
@@ -133,6 +146,7 @@ public class Player {
      */
     public void changed() {
         pm.playerChanged();
+        
     }
 
     public List<Goal> getGoals() {
@@ -146,4 +160,6 @@ public class Player {
     public int getPlayerNumber() {
     	return number;
     }
+    
+    
 }
