@@ -55,7 +55,8 @@ public class GoalManager {
 				//Pick one of our available constraints and add it to the goal
 				Tuple<String, Object> goalConstraint = availableConstraints.get(new Random().nextInt(availableConstraints.size()));
 				availableConstraints.remove(goalConstraint);
-				goal.addConstraint(goalConstraint.getFirst(), goalConstraint.getSecond());
+				
+				goal.addConstraint(resourceManager, goalConstraint.getFirst(), goalConstraint.getSecond());
 			}
 		}
 		return goal;

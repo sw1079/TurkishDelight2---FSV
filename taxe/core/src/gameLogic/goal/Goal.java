@@ -1,9 +1,11 @@
 package gameLogic.goal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Util.Tuple;
 import gameLogic.map.Station;
+import gameLogic.resource.ResourceManager;
 import gameLogic.resource.Train;
 import fvs.taxe.TaxeGame;
 
@@ -23,22 +25,41 @@ public class Goal {
 	private Station exclusionStation;
 	private ArrayList<Train> completedTrains;
 	
+	
+	
+	
 	public Goal(Station origin, Station destination, int turn) {
 		this.origin = origin;
 		this.destination = destination;
 		this.turnIssued = turn;
+		
 		setRewardScore();
 	}
 	
-	public void addConstraint(String name, Object value) {
-		System.out.println(name);
+	
+
+	
+	
+	
+	
+	public void addConstraint(ResourceManager resourceManager, String name, Object value) {
+		
 		if(name.equals("train")) {
 			//CASE train type
 			trainName = String.valueOf(value);
+			System.out.println("Turn Count:" + value);
+			if(turnCount >= 0) 
+			{turnCount = (int)Math.ceil((Integer)turnCount * resourceManager.getTrainSpeed("Bullet Train") / resourceManager.getTrainSpeed(trainName)); }
+			System.out.println("Turn Count" + value);
 		}
 		else if(name.equals("turns")) {
+			System.out.println("Value:" + value);
+			if (trainName != null){
+			value = (int)Math.ceil((Integer)value * resourceManager.getTrainSpeed("Bullet Train") / resourceManager.getTrainSpeed(trainName));}
+			System.out.println("Train Name:" + trainName);
+			System.out.println("Value:" + value);
 			//CASE turn count constraint
-			int val = (Integer)value;
+			int val = (Integer)value ;
 			//Ensure that our value is valid
 			if(val >= 0)
 			{
